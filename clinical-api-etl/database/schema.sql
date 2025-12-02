@@ -19,14 +19,14 @@ CREATE TABLE IF NOT EXISTS etl_jobs (
 );
 
 
---studies
+-- - studies
 CREATE TABLE IF NOT EXISTS studies (
     study_code VARCHAR(50) PRIMARY KEY,
     title TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---participants
+-- - participants
 CREATE TABLE IF NOT EXISTS participants (
     study_code VARCHAR(50) NOT NULL,
     participant_code VARCHAR(50) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS participants (
     FOREIGN KEY (study_code) REFERENCES studies(study_code)
 );
 
---clinical_measurements (raw data from ETL)
+-- - clinical_measurements (raw data from ETL)
 CREATE TABLE IF NOT EXISTS clinical_measurements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     study_id VARCHAR(50) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS clinical_measurements (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---processed_measurements
+-- - processed_measurements
 CREATE TABLE IF NOT EXISTS processed_measurements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     study_code VARCHAR(50) NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS processed_measurements (
         REFERENCES participants(study_code, participant_code)
 );
 
---data_quality_reports
+-- - data_quality_reports
 CREATE TABLE IF NOT EXISTS data_quality_reports (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     study_code VARCHAR(50) NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS data_quality_reports (
     FOREIGN KEY (study_code) REFERENCES studies(study_code)
 );
 
---measurement_aggregations
+-- - measurement_aggregations
 CREATE TABLE IF NOT EXISTS measurement_aggregations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     study_code VARCHAR(50) NOT NULL,
@@ -94,12 +94,12 @@ CREATE TABLE IF NOT EXISTS measurement_aggregations (
 );
 
 
---Basic indexes (candidate should optimize)
+-- Basic indexes (candidate should optimize)
 CREATE INDEX IF NOT EXISTS idx_clinical_measurements_study_id ON clinical_measurements(study_id);
 CREATE INDEX IF NOT EXISTS idx_clinical_measurements_participant_id ON clinical_measurements(participant_id);
 CREATE INDEX IF NOT EXISTS idx_clinical_measurements_timestamp ON clinical_measurements(timestamp);
-CREATE INDEX IF NOT EXISTS idx_study_type_date ON processed_measurements(study_code, measurement_type, agg_date)
-CREATE INDEX IF NOT EXISTS idx_study_site_date ON data_quality_reports(study_code, site_id, report_date)
+CREATE INDEX IF NOT EXISTS idx_study_type_date ON processed_measurements(study_code, measurement_type, agg_date);
+CREATE INDEX IF NOT EXISTS idx_study_site_date ON data_quality_reports(study_code, site_id, report_date);
 
 -- ETL Jobs indexes
 CREATE INDEX IF NOT EXISTS idx_etl_jobs_status ON etl_jobs(status);

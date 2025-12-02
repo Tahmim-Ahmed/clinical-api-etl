@@ -2,7 +2,7 @@ services:
   api:
     build: ./api-service
     ports:
-      - "3000:3000"
+      - "35000:3000"
     depends_on:
       - postgres
       - etl
